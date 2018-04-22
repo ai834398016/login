@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        html, body, main {
+            height: 100%;
+        }
+        main {
+            background: linear-gradient(to right top, rgba(38,50,105,0.78), rgba(255,152,0,0.45));
+        }
+        .login-panel, .register-panel {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 400px;
+            padding: 16px;
+            background-color: #fff;
+            box-shadow: 0 3px 4px 5px rgba(0,0,0,0.2);
+            transform: translate(-50%, -50%);
+            backface-visibility:hidden;
+        }
+        .register .register-panel,
+        .login .login-panel{
+            transform: translate(-50%, -50%) rotateY(0deg);
+            transition: all 1s;
+        }
+        .register .login-panel,
+        .login .register-panel{
+            transform: translate(-50%, -50%) rotateY(180deg);
+            transition: all 1s;
+        }
+        .panel-content {
+            padding: 20px 40px;
+        }
+        input {
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid #aaa;
+            padding: 10px 10px 10px 28px;
+            outline: none;
+        }
+        button {
+            background-color: #fff;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-top: 10px;
+        }
+        .panel-header {
+            position: relative;
+            text-align: center;
+        }
+        .nav-tab {
+            margin: 0 10px;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            display: inline-block;
+            padding: 2px;
+        }
+        .nav-tab:hover, .active {
+            border-bottom: 2px solid #444;
+        }
+        .fa-close {
+            position: absolute;
+            top: 2px;
+            right: 0;
+            color: #666;
+            cursor: pointer;
+        }
+        .relative {
+            position: relative;
+        }
+        .fa-user-o,
+        .fa-lock{
+            position: absolute;
+            top: 20px;
+            left: 10px;
+            color: #666;
+        }
+        .panel-hide .register-panel,
+        .panel-hide .login-panel{
+            display: none;
+        }
+        .fa-user-circle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            color: #444;
+            cursor: pointer;
+        }
+        .error-tip {
+            display: none;
+            font-size: 12px;
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <i class="fa fa-user-circle" onclick="showPanel()"></i>
+    </header>
+    <main class="login" onclick="closePanel()">
+        <div class="login-panel" onclick="stopPropagation(event)">
+            <div class="panel-header">
+                <span class="nav-tab active" onclick="chooseLoginPanel()">登录</span>
+                <span class="nav-tab" onclick="chooseRegisterPanel()">注册</span>
+                <i class="fa fa-close" onclick="closePanel()"></i>
+            </div>
+            <div class="panel-content">
+                <div class="error-tip"></div>
+                <div class="relative">
+                    <i class="fa fa-user-o"></i>
+                    <input placeholder="用户名" type="text" name="loginName">
+                </div>
+                <div class="relative">
+                    <i class="fa fa-lock"></i>
+                    <input placeholder="密码" type="password" name="loginPsw">
+                </div>
+                <button onclick="login()">登录</button>
+            </div>
+        </div>
+
+        <div class="register-panel" onclick="stopPropagation(event)">
+            <div class="panel-header">
+                <span class="nav-tab" onclick="chooseLoginPanel()">登录</span>
+                <span class="nav-tab active" onclick="chooseRegisterPanel()">注册</span>
+                <i class="fa fa-close" onclick="closePanel()"></i>
+            </div>
+            <div class="panel-content">
+                <div class="error-tip"></div>
+                <div class="relative">
+                    <i class="fa fa-user-o"></i>
+                    <input placeholder="请输入用户名" type="text" name="registerName">
+                </div>
+                <div class="relative">
+                    <i class="fa fa-lock"></i>
+                    <input placeholder="请输入密码" type="password" name="registerPsw">
+                </div>
+                <div class="relative">
+                    <i class="fa fa-lock"></i>
+                    <input placeholder="请再次输入密码" type="password" name="registerAgainPsw">
+                </div>
+                <button onclick="register()">注册</button>
+            </div>
+        </div>
+    </main>
+
+<script>
+    function chooseLoginPanel() {
+        document.querySelector('main').classList.remove('register');
+        document.querySelector('main').classList.add('login');
+    }
+    function chooseRegisterPanel() {
+        document.querySelector('main').classList.remove('login');
+        document.querySelector('main').classList.add('register');
+    }
+    function closePanel() {
+        document.querySelector('main').classList.add('panel-hide');
+    }
+    function showPanel() {
+        document.querySelector('main').classList.remove('panel-hide');
+    }
+    function stopPropagation(e) {
+        e.stopPropagation();
+    }
+    function login() {
+        var name = document.getElementsByName('loginName')[0].value,
+            psw = document.getElementsByName('loginPsw')[0].value,
+            tipNode = document.querySelector('.login-panel .error-tip');
+        tipNode.style.display = 'none';
+        if (!/[a-zA-Z_]{3,8}/.test(name)) {
+            tipNode.innerText = '用户名需输入3-8个字符，包括字母数字下划线';
+            tipNode.style.display = 'block';
+        } else if(!/[a-zA-Z_]{6,10}/.test(psw)) {
+            tipNode.innerText = '密码需输入6-10个字符，包括字母数字下划线';
+            tipNode.style.display = 'block';
+        } else {
+            alert('登录成功');
+        }
+    }
+    function register() {
+        var name = document.getElementsByName('registerName')[0].value,
+            psw = document.getElementsByName('registerPsw')[0].value,
+            againPsw = document.getElementsByName('registerAgainPsw')[0].value,
+            tipNode = document.querySelector('.register-panel .error-tip');
+        console.log(name)
+        tipNode.style.display = 'none';
+        if (!/[a-zA-Z_]{3,8}/.test(name)) {
+            console.log('??')
+            tipNode.innerText = '用户名需输入3-8个字符，包括字母数字下划线';
+            tipNode.style.display = 'block';
+        } else if(!/[a-zA-Z_]{6,10}/.test(psw)) {
+            tipNode.innerText = '密码需输入6-10个字符，包括字母数字下划线';
+            tipNode.style.display = 'block';
+        } else if(psw !== againPsw) {
+            tipNode.innerText = '两次输入密码不一致';
+            tipNode.style.display = 'block';
+        } else {
+            alert('注册成功');
+        }
+    }
+</script>
+</body>
+</html>
